@@ -711,8 +711,8 @@ const OPT = {
   ],
   speed: [
     {t:"不会", sc:0},
-    {t:"会但慢（＜15字/分，需看键盘）", sc:6},
-    {t:"基本（15–25字/分）", sc:10},
+    {t:"比较慢（＜15字/分，需看键盘）", sc:6},
+    {t:"基本会（15–25字/分）", sc:10},
     {t:"熟练（≥25字/分，可盲打）", sc:15}
   ],
   aoshu: [
@@ -726,7 +726,7 @@ const EN_BAND   = [[0,2],[70,5],[80,8],[90,10]];
 
 const TOTAL_FULL = 120;   // 综合得分满分（基础 100 + 奥数加分 20）
 const TOTAL_LOW  = 110;   // 大颗粒段（英语不计分）上限（90 + 20）
-const AOSHU_BONUS = 20;   // 奥数基础加分（只加分，不影响课程判定）
+const AOSHU_BONUS = 20;   // 奥数基础加分
 
 /* =========================================================
    判定引擎（严格对齐 v7 R 列 / S 列公式）
@@ -800,7 +800,7 @@ function judge(d){
       course="Python"; hit="P4";
       if (d.math <= 60)      why = "数学未过 60 分：按慢班推进并同步数学强化，达标后复测转 C++。";
       else if (O < 10)       why = "数学未达 90 分且打字未达「基本会」：同步开打字专项（2–4 周），数学 ≥ 90 或打字达标后复测转 C++。";
-      else if (K < 6)        why = "数学未达 90 分且无编程基础：从图形化起步建立基础，数学或基础任一提升后复测转 C++。";
+      else if (K < 6)        why = "数学未达 90 分且无编程基础：逐步学习编程知识点建立基础，数学或基础任一提升后复测转 C++。";
       else                   why = "两条 C++ 通道均未命中：先入 Python，缺项改为同步补强，达标后复测转 C++。";
       why += "（10 岁起<b>不回落图形化</b>，缺项只是同步补强，不降级课程。）";
     }
@@ -817,7 +817,7 @@ function judge(d){
   if (course === "Python" && d.math <= 60)
     tips.push("数学 ≤ 60 分：按慢班节奏推进并<b>同步数学强化</b>，数学 ＞ 60 后复测转 C++。");
   if (course === "Python" && K < 6)
-    tips.push("无编程基础：从<b>图形化起步</b>建立顺序与循环概念，具备基础后复测转 C++。");
+    tips.push("无编程基础：<b></b>建立顺序与循环概念等基础，具备基础后复测转 C++。");
   if (course === "C++")
     tips.push("建议同步规划 <b>CSP-J/S 与 GESP 考级</b>路线。");
   if (course === "Spike" && hit === "P3")
@@ -829,9 +829,9 @@ function judge(d){
   if (course === "Spike启蒙")
     tips.push("重点培养动手与兴趣，建立<b>指令、顺序、循环</b>概念，为后续 Spike 段打底。");
   if (A > 0)
-    tips.push("有<b>奥数基础（+20 分）</b>：逻辑与数感通常更扎实，<b>同档位分班时可优先编入快班</b>；此项<b>仅作加分，不改变推荐课程</b>。");
+    tips.push("有<b>奥数基础（+20 分）</b>：逻辑与数感通常更扎实，<b>同档位分班时可优先编入快班。</b>");
   else
-    tips.push("暂无奥数基础：建议在课程中同步做<b>逻辑思维与数感训练</b>；若后续有奥数 / 思维拓展经历，可在评分中补加分（不影响课程判定）。");
+    tips.push("暂无奥数基础：建议在课程中同步做<b>逻辑思维与数感训练</b>");
 
   return {
     course, hit, why, tips,
@@ -910,7 +910,7 @@ const COURSE_INFO = {
       {h:"配套教具与出口", items:[
         "配套教具：<b>大颗粒积木、玛塔编程机器人</b>。",
         "教学理念：幼儿智力发育敏感期、五大领域、多元智能、LAUNCH 循环模式。",
-        "科创挑战及测评：<b>全国青少年机器人技术等级考试 1–2 级</b>；Jr.FLL、RoboRAVE。"
+        "科创挑战及测评：<b>全国青少年机器人技术等级考试 1级</b>；Jr.FLL、RoboRAVE。"
       ]}
     ]
   },
@@ -956,7 +956,7 @@ const COURSE_INFO = {
       {h:"知识梯度与出口", items:[
         "知识梯度：<b>基础结构 → 简单机械结构 → 简单机械结构 + 少量科技件 → 复杂机械结构 → 机构综合应用</b>。",
         "搭建教具：大颗粒 → 小颗粒少量科技件 → <b>纯科技件</b>。",
-        "科创出口：全国青少年机器人技术等级考试、各级机器人与创客赛事。"
+        "科创出口：全国青少年机器人技术等级考试、教育部白名单赛事。"
       ]}
     ]
   },
@@ -988,7 +988,7 @@ const COURSE_INFO = {
   "C++": {
     name: "C++ 信息学课程",
     tag:  "课程介绍 · 竞赛方向",
-    sub:  "信息学奥赛主赛道　｜　CSP-J/S · GESP　｜　六年级–初二最佳窗口",
+    sub:  "信息学奥赛主赛道　｜　CSP-J/S · GESP　",
     cls:  "cpp",
     intro: [
       "C++ 语法基础与进阶课程：学习 C++ 语言，熟练掌握表达式、数据类型、顺序结构、选择语句、循环语句、数组、字符串等语法知识，具备编程思想，能使用编程思维解决基础数学问题、简单逻辑推导问题。",
@@ -1100,7 +1100,7 @@ function openCourseModal(courseKey, r){
           <div class="cm-step"><span class="n">1</span>
             <span>本学员综合得分 <b>${r.total} / ${r.totalMax}</b>，建议从 <b>${info.name}</b> 起步。</span></div>
           ${tops.map((s,i)=>`<div class="cm-step"><span class="n">${i+2}</span>
-            <span>优势项：<b>${s.nm}</b> 得分 <b>${s.v} / ${s.max}</b>，可在课堂中重点发挥。</span></div>`).join("")}
+            <span>优势项：<b>${s.nm}</b> 得分 <b>${s.v} / ${s.max}</b>，可在课堂中发挥优势。</span></div>`).join("")}
         </div>
       </div>`;
     }
@@ -1131,8 +1131,8 @@ function syncExempt(){
   $("exempt").classList.toggle("on", isBig);
   $("req-math").style.display = isBig ? "none" : "";
   $("req-en").style.display   = isBig ? "none" : "";
-  inpMath.placeholder = isBig ? "可不填" : "如 85";
-  inpEn.placeholder   = isBig ? "可不填（本段不考核）" : "如 80";
+  inpMath.placeholder = isBig ? "可不填" : "如：85";
+  inpEn.placeholder   = isBig ? "可不填（本段不考核）" : "如：80";
   inpEn.disabled = isBig;
   if (isBig) inpEn.value = "";
 }
