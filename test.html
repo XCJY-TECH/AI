@@ -594,7 +594,7 @@ footer.ft11 b{color:var(--navy2);}
       </div>
 
       <div class="exempt" id="exempt">
-        该年级属于 <b>大颗粒段（幼儿园大班 / 一年级）</b>：数学与英语栏可留空，判定不受影响。
+        该年级属于 <b>大颗粒段（幼儿园小班 / 中班 / 大班 · 一年级）</b>：数学与英语栏可留空，判定不受影响。
       </div>
 
       <div class="two">
@@ -691,10 +691,15 @@ footer.ft11 b{color:var(--navy2);}
    ========================================================= */
 const OPT = {
   grade: [
-    {t:"幼儿园大班", sc:4,  ord:1},
+    // 幼儿园小班 / 中班：只开 LEGO 创意编程启蒙（大颗粒段，纯搭建、不接触代码）
+    {t:"幼儿园小班", sc:4,  ord:1, kinder:true, preschool:true},
+    {t:"幼儿园中班", sc:4,  ord:1, kinder:true, preschool:true},
+    {t:"幼儿园大班", sc:4,  ord:1,              preschool:true},
     {t:"一年级",     sc:4,  ord:1},
     {t:"二年级",     sc:8,  ord:2},
     {t:"三年级",     sc:12, ord:3},
+    // 新四年级＝刚升上四年级（年龄常仍不足 10 岁）：优先 Python 体验课，就低不就高
+    {t:"新四年级",   sc:15, ord:4, new4:true},
     {t:"四年级",     sc:15, ord:4},
     {t:"五年级",     sc:18, ord:5},
     {t:"六年级",     sc:20, ord:6},
@@ -705,7 +710,10 @@ const OPT = {
     {t:"大颗粒／乐高搭建（无编程）", sc:6},
     {t:"图形化编程（Scratch／Mixly／Spike）", sc:12},
     {t:"图形化＋硬件／竞赛／考级", sc:16},
-    {t:"代码类（Python／C++）", sc:20}
+    {t:"代码类 · 仅 Python", sc:20, code:true, py:true},
+    // 有 C++ 基础（单独学过或 Python＋C++ 都学过）：四年级及以上可直接测试 / 进入 C++ 课程
+    {t:"代码类 · 仅 C++", sc:20, code:true, cpp:true},
+    {t:"代码类 · Python＋C++ 双基础", sc:20, code:true, cpp:true, py:true}
   ],
   dur:   [
     {t:"无（0）", sc:0}, {t:"6个月以内", sc:4},
@@ -743,11 +751,15 @@ function notEmpty(x){ return x !== "" && x !== null && x !== undefined && !Numbe
 function judge(d){
   const g       = OPT.grade.find(o => o.t === d.grade);
   const ord     = g ? g.ord : 99;
-  const isBig   = ord <= 1;               // 大颗粒段：幼儿园大班 / 一年级
+  const isBig   = ord <= 1;               // 大颗粒段：幼儿园小班 / 中班 / 大班 · 一年级
   const K       = d.base.sc;              // 编程基础分
+  const HAS_CPP = !!(d.base && d.base.cpp);   // 已有 C++ 基础（仅 C++ 或 Python＋C++ 均算；四年级及以上可直测 C++）
+  const HAS_PY  = !!(d.base && d.base.py);    // 已有 Python 基础（仅 Python 或 Python＋C++ 均算）
   const L       = d.dur.sc;               // 时长分
   const M       = notEmpty(d.math) ? lookupBand(d.math, MATH_BAND) : 0;
   const O       = d.speed.sc;             // 打字分
+  // 有 C++ 基础可以直通 C++，但前提是打字不能是「不会」——打字不会一律就低
+  const CAN_CPP = HAS_CPP && O > 0;
   const N       = isBig ? null : (notEmpty(d.en) ? lookupBand(d.en, EN_BAND) : 0);
   const J       = g ? g.sc : 0;
   const A       = d.aoshu ? d.aoshu.sc : 0;   // 奥数加分（不参与判定）
@@ -760,8 +772,13 @@ function judge(d){
   /* ---------- 硬门槛链（自内向外，与 R 列嵌套 IF 同构） ---------- */
   let course, hit, why;
 
+  // P0 幼儿园小班 / 中班：只开 LEGO 创意编程启蒙（纯搭建、不接触代码）
+  if (g && g.kinder){
+    course="大颗粒"; hit="P0";
+    why = "幼儿园小班 / 中班（3–5 岁）以<b>动手搭建、机械结构与兴趣培养</b>为主，安排 <b>LEGO 创意编程启蒙</b> 课程；本阶段<b>不接触代码、不考核英语</b>。";
+  }
   // 先判 P1（大班·一年级）
-  if (ord <= 1){
+  else if (ord <= 1){
     if (K >= 6 || L > 0){
       course="Spike启蒙"; hit="P1";
       why = "低年级（6 岁起）已具备指令与顺序意识：已有大颗粒 / 乐高搭建或图形化经历，可直接进入图形化启蒙。";
@@ -783,16 +800,54 @@ function judge(d){
     course="Spike"; hit="P3";
     why = "三年级（9 岁）未达 10 岁，代码课年级封顶，先待在 Spike 段；<b>能力突出者须先对接讲师做能力测评再破格</b>。";
   }
+  // 新四年级：有 C++ 基础且打字过关 → C++；有代码基础（Python / C++）→ Python；
+  // 两者都没有 → 优先体验 Spike（就低不就高）
+  else if (g && g.new4){
+    if (CAN_CPP){
+      course="C++"; hit="N4";
+      why = "新四年级（刚升上四年级）<b>已有 C++ 基础</b>：不必从 Python 重新起步，<b>可直接进入 C++ 信息学课程</b>测试与学习。";
+    } else if (HAS_CPP){ // 有 C++ 基础，但打字「不会」→ 就低走 Python
+      course="Python"; hit="N4";
+      why = "新四年级（刚升上四年级）已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——按「<b>就低不就高</b>」先安排 <b>Python 体验课</b>（语法更易上手，可与打字专项同步推进）；打字达标后复测转 C++。";
+    } else if (HAS_PY){
+      course="Python"; hit="N4";
+      why = "新四年级（刚升上四年级）<b>已有 Python 基础</b>：直接进入 <b>Python 体验课</b>，巩固语法与调试习惯；补齐 C++ 基础后即可评估转 C++ 竞赛方向。";
+    } else {
+      course="Spike"; hit="N4";
+      why = "新四年级（刚升上四年级）<b>尚无 Python / C++ 代码基础</b>：按「<b>就低不就高</b>」优先体验 <b>Spike 智能机器人编程</b>——先在图形化与硬件中建立编程直觉。<b>C++ 信息学课程与 PYTHON 纯代码编程都可以</b>作为后续推荐课，由家长 / 顾问按孩子意愿选择；Spike 基础达标后即可安排。";
+    }
+  }
+  // 四年级：优先 Python 体验课，就低不就高；
+  // 唯一例外：已有 C++ 基础（仅 C++ 或 Python＋C++ 均可）→ 才直接学 / 测 C++
+  else if (ord === 4){
+    if (CAN_CPP){
+      course="C++"; hit="P4";
+      why = "四年级<b>已有 C++ 基础</b>：不必从 Python 重新起步，<b>可直接进入 C++ 信息学课程</b>测试与学习。";
+    } else if (O === 0 && K === 0 && M < 10){ // 三项全缺：先 Spike 打底
+      course="Spike"; hit="P4";
+      why = "四年级打字、编程基础、数学<b>三项全缺</b>：按「<b>就低不就高</b>」先到 Spike 段，建立图形化概念 + 打字专项，达标后复测转 Python。";
+    } else if (HAS_CPP){ // 有 C++ 基础，但打字「不会」→ 同样就低
+      course="Python"; hit="P4";
+      why = "四年级已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——按「<b>就低不就高</b>」先安排 <b>Python 体验课</b>（语法更易上手，可与打字专项同步推进）；打字达标后复测转 C++。";
+    } else {
+      course="Python"; hit="P4";
+      why = "四年级<b>优先安排 Python 体验课</b>：本段按「<b>就低不就高</b>」取档——除已具备 <b>C++ 基础</b> 外，即使数学 ≥ 90 或仅有 Python 基础，也<b>从 Python 起步，不直接判 C++</b>；待 Python 阶段表现稳定后，再评估转 C++ 竞赛方向。";
+    }
+  }
   // P5 唯一回落（三项全缺）
   else if (O === 0 && K === 0 && M < 10){
     course="Spike"; hit="P5";
     why = "打字、编程基础、数学<b>三项全缺</b>：先建图形化概念 + 打字专项，达标后转 Python。这是<b>唯一回落通道</b>。";
   }
-  // P4 四年级及以上：C++ 两条通道
+  // P4 五年级及以上：三条通道进入 C++
   else {
-    const viaHigh = d.math >= 90;                              // 通道①：数学 ≥ 90，免打字与基础
-    const viaNorm = d.math > 60 && O >= 10 && K >= 6;          // 通道②：数学>60 且 打字≥基本 且 有基础
-    if (viaHigh){
+    const viaCpp  = CAN_CPP;                                   // 通道①：已有 C++ 基础（打字不能是「不会」），免数学
+    const viaHigh = d.math >= 90;                              // 通道②：数学 ≥ 90，免打字与基础
+    const viaNorm = d.math > 60 && O >= 10 && K >= 6;          // 通道③：数学>60 且 打字≥基本 且 有基础
+    if (viaCpp){
+      course="C++"; hit="P4";
+      why = "已有 <b>C++ 基础</b>，直接进入 <b>C++ 信息学课程</b>（<b>免数学与打字门槛</b>）；建议同步规划 CSP-J/S 与 GESP 考级。";
+    } else if (viaHigh){
       course="C++"; hit="P4";
       why = "数学 <b>≥ 90 分</b>，已走「高分直通」通道进入 C++（<b>免打字与编程基础门槛</b>）；建议同步规划 CSP-J/S 与 GESP 考级，并补齐打字与图形化基础习惯。";
     } else if (viaNorm){
@@ -801,31 +856,48 @@ function judge(d){
     } else {
       course="Python"; hit="P4";
       if (d.math <= 60)      why = "数学未过 60 分：按慢班推进并同步数学强化，达标后复测转 C++。";
+      else if (HAS_CPP && O === 0)
+                             why = "已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——按「<b>就低不就高</b>」先入 Python 并同步补打字，打字达标后复测转 C++。";
       else if (O < 10)       why = "数学未达 90 分且打字未达「基本会」：同步开打字专项（2–4 周），数学 ≥ 90 或打字达标后复测转 C++。";
       else if (K < 6)        why = "数学未达 90 分且无编程基础：逐步学习编程知识点建立基础，数学或基础任一提升后复测转 C++。";
-      else                   why = "两条 C++ 通道均未命中：先入 Python，缺项改为同步补强，达标后复测转 C++。";
-      why += "（10 岁起<b>不回落图形化</b>，缺项只是同步补强，不降级课程。）";
+      else                   why = "三条 C++ 通道均未命中：先进入 Python 课程，基础达标后复测转 C++。";
     }
   }
 
   /* ---------- 配套建议 ---------- */
   const tips = [];
-  if (course === "C++" && d.math >= 90 && O < 10)
+  if (course === "C++" && !HAS_CPP && d.math >= 90 && O < 10)
     tips.push("数学高分直通，但打字未达「基本会」——建议开班后<b>同步开打字专项（2–4 周）</b>。");
-  if (course === "C++" && d.math >= 90 && K < 6)
+  if (course === "C++" && !HAS_CPP && d.math >= 90 && K < 6)
     tips.push("无编程基础但数学达标——建议同步补<b>图形化基础习惯</b>，不影响进入竞赛方向。");
   if (course === "Python" && O < 10)
-    tips.push("打字未达「基本会」：<b>加打字专项（2–4 周）</b>，不因此降级课程。");
+    tips.push("打字未达「基本会」：建议<b>加打字专项（2–4 周）</b>。");
   if (course === "Python" && d.math <= 60)
     tips.push("数学 ≤ 60 分：按慢班节奏推进并<b>同步数学强化</b>，数学 ＞ 60 后复测转 C++。");
   if (course === "Python" && K < 6)
     tips.push("无编程基础：<b></b>建立顺序与循环概念等基础，具备基础后复测转 C++。");
+  if (course === "C++" && CAN_CPP)
+    tips.push("已凭 <b>C++ 基础</b>直通：建议直接切入 <b>算法与竞赛真题</b>训练，同步规划 <b>CSP-J/S 与 GESP</b> 考级。");
+  if (course === "Python" && HAS_CPP && O === 0)
+    tips.push("有 C++ 基础但<b>打字「不会」</b>：先补齐打字（2–4 周），达标后复测转 C++。");
   if (course === "C++")
     tips.push("建议同步规划 <b>CSP-J/S 与 GESP 考级</b>路线。");
   if (course === "Spike" && hit === "P3")
     tips.push("三年级无代码课通道：如孩子能力突出，请先<b>对接讲师做能力测评</b>，由讲师确认后再安排代码课");
   if (course === "Spike" && hit === "P5")
     tips.push("先建<b>图形化概念 + 打字专项</b>，2–4 周达标后复测转 Python。");
+  if (course === "Spike" && g && g.new4){
+    tips.push("新四年级<b>尚无 Python / C++ 代码基础</b>，优先体验 <b>Spike 智能机器人编程</b>：先在图形化与硬件中建立编程直觉。");
+    tips.push("后续 <b>C++ 信息学课程与 PYTHON 纯代码编程都可以</b>推荐，按孩子意愿与学习节奏择一即可。");
+  }
+  if (course === "Spike" && ord === 4 && !(g && g.new4))
+    tips.push("四年级先走 <b>Spike 段</b>：把图形化、机械结构与打字习惯打扎实，2–4 周达标后复测转 <b>Python</b>。");
+  if (course === "Python" && g && g.new4 && HAS_PY && !HAS_CPP)
+    tips.push("新四年级<b>已有 Python 基础</b>：直接进入 <b>Python 体验课</b> 巩固语法与调试习惯；补齐 C++ 基础后即可评估转 <b>C++ 竞赛方向</b>。");
+  if (course === "Python" && ord === 4 && !(g && g.new4))
+    tips.push("四年级按<b>就低不就高</b>从 <b>Python 体验课</b> 起步：先适应纯代码环境、建立语法与调试习惯；除已有 <b>C++ 基础</b> 外，表现稳定后再评估 <b>C++ 竞赛方向</b>。");
+  if (course === "大颗粒" && hit === "P0")
+    tips.push("小班 / 中班阶段<b>不接触代码、不考核英语</b>：建议完成 1 个学期 <b>LEGO 创意编程启蒙</b> 后，再评估升入 Spike 段。");
   if (course === "大颗粒")
     tips.push("本阶段以<b>结构搭建、机械传动、手眼协调</b>为主。");
   if (course === "Spike启蒙")
@@ -869,18 +941,34 @@ const inpMath = $("f-math"), inpEn = $("f-en");
 function fillSelect(node, list, defIdx){
   node.innerHTML = list.map((o,i)=>`<option value="${i}"${i===defIdx?" selected":""}>${o.t}</option>`).join("");
 }
-fillSelect(sel.grade, OPT.grade, 4);   // 默认四年级
-fillSelect(sel.base,  OPT.base,  0);
+/* 编程基础下拉：幼儿园（小班 / 中班 / 大班）不展示「代码类」选项
+   —— 幼儿园阶段一般不具备 Python / C++ 基础
+   option 的 value 始终是 OPT.base 的下标，保证 run() 里 OPT.base[+value] 的映射不变 */
+function renderBase(){
+  const g = OPT.grade[+sel.grade.value];
+  const allowCode = !(g && g.preschool);
+  const cur = +sel.base.value || 0;
+  sel.base.innerHTML = OPT.base
+    .map((o, i) => ({ o, i }))
+    .filter(x => allowCode || !x.o.code)
+    .map(x => `<option value="${x.i}"${x.i === cur ? " selected" : ""}>${x.o.t}</option>`)
+    .join("");
+  if (OPT.base[+sel.base.value] && OPT.base[+sel.base.value].code && !allowCode) sel.base.value = "0";
+}
+
+const GRADE_DEF = Math.max(0, OPT.grade.findIndex(o => o.t === "四年级"));   // 默认四年级（用名称定位，避免插项后索引错位）
+fillSelect(sel.grade, OPT.grade, GRADE_DEF);
+renderBase();
 fillSelect(sel.aoshu, OPT.aoshu, 0);
 fillSelect(sel.dur,   OPT.dur,   0);
 fillSelect(sel.speed, OPT.speed, 0);
 
 const COURSE_META = {
-  "大颗粒":   {tag:"推荐测评课", cls:"granule", sub:"机械搭建 · 兴趣启蒙　｜　3–5 岁　"},
+  "大颗粒":   {tag:"推荐测评课", cls:"granule", sub:"LEGO 创意编程启蒙 · 机械搭建　｜　幼儿园小班–大班（3–5 岁）"},
   "Spike启蒙":{tag:"推荐测评课", cls:"spikeq",  sub:"乐高 Spike + 图形化入门　｜　6 岁（一年级）起"},
   "Spike":    {tag:"推荐测评课", cls:"spike",   sub:"图形化基础 / 进阶 · 竞赛启蒙　｜　8 岁（二年级）起"},
-  "Python":   {tag:"推荐测评课", cls:"python",  sub:"代码编程主入口　｜　10 岁（四年级）起　｜　缺项同步补强"},
-  "C++":      {tag:"推荐测评课", cls:"cpp",     sub:"信息学竞赛方向　｜　CSP-J/S · GESP　｜　六年级–初二为最佳窗口"}
+  "Python":   {tag:"推荐测评课", cls:"python",  sub:"代码编程主入口　｜　10 岁（四年级）起"},
+  "C++":      {tag:"推荐测评课", cls:"cpp",     sub:"信息学竞赛方向　｜　CSP-J/S · GESP"}
 };
 
 /* =========================================================
@@ -966,7 +1054,7 @@ const COURSE_INFO = {
   "Python": {
     name: "PYTHON 纯代码编程",
     tag:  "课程介绍 · 代码主入口",
-    sub:  "从图形化过渡到真代码　｜　10 岁（四年级）起　｜　缺项同步补强",
+    sub:  "从图形化过渡到真代码　｜　10 岁（四年级）起",
     cls:  "python",
     intro: [
       "Python 趣味游戏课程：学生将通过 6 个单元系统的学习 Python 语法知识，从零开始打造自己的程序，课程案例的选择都着重于传授和实践 Python 基础知识，每节课都包含展示不同知识点的小案例，通过完成这些案例来加深学习效果。",
@@ -1124,12 +1212,44 @@ document.addEventListener("keydown", e=>{
   if (e.key === "Escape" && cmEl.classList.contains("on")) closeCourseModal();
 });
 
+/* =========================================================
+   测评结果 → 文本报告（供「复制结果」使用）
+   ========================================================= */
+const plain = s => String(s == null ? "" : s).replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ").trim();
+
+/* 组装统一格式的报告 */
+function buildReport(d, r){
+  const now = new Date().toLocaleString("zh-CN", {hour12:false});
+  const lines = [
+    "【新晨教育 · AI编程能力智能测评报告】",
+    "提交时间：" + now,
+    "————————————",
+    "学员姓名：" + (d.name || "（未填）"),
+    "年级：" + d.grade,
+    "学校：" + (d.school || "（未填）"),
+    "编程基础：" + d.base.t,
+    "编程学习时长：" + d.dur.t,
+    "奥数基础：" + d.aoshu.t,
+    "数学成绩：" + (d.math === null ? "（本段不考核）" : d.math + " 分"),
+    "英语成绩：" + (r.isBig ? "（本段不考核）" : d.en + " 分"),
+    "打字基础：" + d.speed.t,
+    "————————————",
+    "推荐测评课：" + r.course,
+    "判定依据：" + plain(r.why),
+    "综合得分：" + r.total + " / " + r.totalMax,
+    "配套建议：",
+    ...r.tips.map(t => "  · " + plain(t))
+  ];
+  return lines.join("\n");
+}
+
 function currentOrd(){
   const g = OPT.grade[+sel.grade.value];
   return g ? g.ord : 99;
 }
 function syncExempt(){
   const isBig = currentOrd() <= 1;
+  renderBase();                       // 幼儿园不出「代码类」选项
   $("exempt").classList.toggle("on", isBig);
   $("req-math").style.display = isBig ? "none" : "";
   $("req-en").style.display   = isBig ? "none" : "";
@@ -1139,6 +1259,15 @@ function syncExempt(){
   if (isBig) inpEn.value = "";
 }
 sel.grade.addEventListener("change", syncExempt);
+
+/* 编程基础选「无」→ 学习时长自动归零（避免「无基础却有 2 年时长」的矛盾组合） */
+sel.base.addEventListener("change", ()=>{
+  const b = OPT.base[+sel.base.value];
+  if (b && b.sc === 0){
+    sel.dur.value = "0";
+    toast("编程基础为「无」，编程学习时长已归零");
+  }
+});
 syncExempt();
 
 /* =========================================================
@@ -1194,6 +1323,13 @@ function run(){
 
   if (notEmpty(d.math) && (d.math < 0 || d.math > 100)){ toast("数学成绩请在 0–100 之间"); return; }
   if (notEmpty(d.en)   && (d.en   < 0 || d.en   > 100)){ toast("英语成绩请在 0–100 之间"); return; }
+
+  // 自洽校验：有编程基础 → 编程学习时长不能为「无（0）」
+  if (d.base.sc > 0 && d.dur.sc === 0){
+    toast("已选编程基础「" + d.base.t + "」，请同时选择编程学习时长");
+    sel.dur.focus();
+    return;
+  }
 
   const r = judge(d);
 
@@ -1255,7 +1391,7 @@ function toast(msg){
 $("btn-run").addEventListener("click", run);
 $("btn-reset").addEventListener("click", ()=>{
   elName.value = ""; elSchool.value = "";
-  sel.grade.value = "4"; sel.base.value = "0"; sel.aoshu.value = "0";
+  sel.grade.value = String(GRADE_DEF); sel.base.value = "0"; sel.aoshu.value = "0";
   sel.dur.value = "0";   sel.speed.value = "0";
   inpMath.value = ""; inpEn.value = "";
   syncExempt();
@@ -1281,25 +1417,7 @@ $("btn-course").addEventListener("click", ()=>{
 $("btn-copy").addEventListener("click", async ()=>{
   const w = window.__lastResult;
   if (!w){ toast("请先完成匹配"); return; }
-  const { d, r } = w;
-  const plain = (s)=> String(s).replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ");
-  const lines = [
-    "【新晨教育 · 测评课匹配结果】",
-    d.name ? "学员：" + d.name : null,
-    "年级：" + d.grade + (d.school ? "　学校：" + d.school : ""),
-    "编程基础：" + d.base.t + "　学习时长：" + d.dur.t,
-    "数学：" + (d.math===null?"（本段不考核）":d.math+" 分") +
-      "　英语：" + (r.isBig?"（本段不考核）":d.en+" 分"),
-    "打字基础：" + d.speed.t,
-    "奥数基础：" + d.aoshu.t + (r.aoshu?"（+20 加分）":"（+0）"),
-    "————————————",
-    "推荐测评课：" + r.course,
-    "判定依据：" + plain(r.why),
-    "综合得分：" + r.total + " / " + r.totalMax,
-    "配套建议：",
-    ...r.tips.map(t=>"  · " + plain(t))
-  ].filter(Boolean);
-  const text = lines.join("\n");
+  const text = buildReport(w.d, w.r);
   try{
     await navigator.clipboard.writeText(text);
     toast("结果已复制到剪贴板");
