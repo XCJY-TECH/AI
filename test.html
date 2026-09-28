@@ -206,11 +206,13 @@
   .sc-total .bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#F5C169,#EB8E2D);width:0;transition:width .8s cubic-bezier(.22,1,.36,1);}
   .sc-total .vl{width:56px;flex:0 0 56px;text-align:right;font-weight:800;color:#B96A0F;}
 
-  .tips{list-style:none;font-size:12.5px;line-height:1.85;color:var(--navy2);}
-  .tips li{padding-left:18px;position:relative;margin-bottom:5px;}
+  .tips{list-style:none;counter-reset:tip;font-size:12.5px;line-height:1.85;color:var(--navy2);}
+  .tips li{padding-left:25px;position:relative;margin-bottom:7px;counter-increment:tip;}
   .tips li::before{
-    content:"";position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:50%;
-    background:var(--orange);
+    content:counter(tip);position:absolute;left:0;top:4px;
+    width:16px;height:16px;border-radius:50%;background:var(--orange);
+    color:#fff;font-size:10.5px;font-weight:800;line-height:16px;text-align:center;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;
   }
   .tips li b{color:#B96A0F;}
   .tips li a{
@@ -1222,16 +1224,29 @@ document.addEventListener("keydown", e=>{
 /* =========================================================
    测评结果 → 文本报告（供「复制结果」使用）
    ========================================================= */
-const plain = s => String(s == null ? "" : s).replace(/<[^>]+>/g,"").replace(/&nbsp;/g," ").trim();
+const plain = s => String(s == null ? "" : s)
+  .replace(/<a\b[^>]*href=["']([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi, "$1")  // 链接还原成完整网址，粘贴后仍可复制/打开
+  .replace(/<[^>]+>/g,"")
+  .replace(/&nbsp;/g," ")
+  .replace(/[ \t]+/g," ")
+  .trim();
 
-/* 组装统一格式的报告 */
+/* 组装统一格式的报告：分「一、二、三…」大节，每节内条目用 1. 2. 3. 编号 */
 function buildReport(d, r){
   const now = new Date().toLocaleString("zh-CN", {hour12:false});
-  const lines = [
-    "【新晨教育 · AI编程能力智能测评报告】",
-    "提交时间：" + now,
-    "————————————",
-    "学员姓名：" + (d.name || "（未填）"),
+  const L = [];
+  // 分区写入：节标题 + 节内自动编号（节与节之间不空行，便于粘贴到微信）
+  const sec = (title, items) => {
+    if (!items || !items.length) return;
+    L.push(title);
+    items.forEach((t, i) => L.push((i + 1) + ". " + t));
+  };
+
+  L.push("【新晨教育 · AI编程能力智能测评报告】");
+  L.push("提交时间：" + now);
+
+  sec("一、学员信息", [
+    "姓名：" + (d.name || "（未填）"),
     "年级：" + d.grade,
     "学校：" + (d.school || "（未填）"),
     "编程基础：" + d.base.t,
@@ -1239,15 +1254,18 @@ function buildReport(d, r){
     "奥数基础：" + d.aoshu.t,
     "数学成绩：" + (d.math === null ? "（本段不考核）" : d.math + " 分"),
     "英语成绩：" + (r.isBig ? "（本段不考核）" : d.en + " 分"),
-    "打字基础：" + d.speed.t,
-    "————————————",
+    "打字基础：" + d.speed.t
+  ]);
+
+  sec("二、匹配结果", [
     "推荐测评课：" + r.course,
-    "判定依据：" + plain(r.why),
     "综合得分：" + r.total + " / " + r.totalMax,
-    "配套建议：",
-    ...r.tips.map(t => "  · " + plain(t))
-  ];
-  return lines.join("\n");
+    "判定依据：" + plain(r.why)
+  ]);
+
+  sec("三、配套建议", (r.tips || []).map(t => plain(t)));
+
+  return L.join("\n");
 }
 
 function currentOrd(){
