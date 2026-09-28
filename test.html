@@ -213,6 +213,10 @@
     background:var(--orange);
   }
   .tips li b{color:#B96A0F;}
+  .tips li a{
+    color:#1565C0;font-weight:800;text-decoration:underline;
+    text-underline-offset:2px;word-break:break-all;
+  }
 
   .act{display:flex;gap:9px;margin-top:18px;flex-wrap:wrap;}
   .act button{flex:1;min-width:120px;padding:11px 14px;font-size:13px;}
@@ -808,13 +812,13 @@ function judge(d){
       why = "新四年级（刚升上四年级）<b>已有 C++ 基础</b>：不必从 Python 重新起步，<b>可直接进入 C++ 信息学课程</b>测试与学习。";
     } else if (HAS_CPP){ // 有 C++ 基础，但打字「不会」→ 就低走 Python
       course="Python"; hit="N4";
-      why = "新四年级（刚升上四年级）已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——按「<b>就低不就高</b>」先安排 <b>Python 体验课</b>（语法更易上手，可与打字专项同步推进）；打字达标后复测转 C++。";
+      why = "新四年级（刚升上四年级）已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——先安排 <b>Python 体验课</b>（语法更易上手，可与打字专项同步推进）；打字达标后复测转 C++。";
     } else if (HAS_PY){
       course="Python"; hit="N4";
       why = "新四年级（刚升上四年级）<b>已有 Python 基础</b>：直接进入 <b>Python 体验课</b>，巩固语法与调试习惯；补齐 C++ 基础后即可评估转 C++ 竞赛方向。";
     } else {
       course="Spike"; hit="N4";
-      why = "新四年级（刚升上四年级）<b>尚无 Python / C++ 代码基础</b>：按「<b>就低不就高</b>」优先体验 <b>Spike 智能机器人编程</b>——先在图形化与硬件中建立编程直觉。<b>C++ 信息学课程与 PYTHON 纯代码编程都可以</b>作为后续推荐课，由家长 / 顾问按孩子意愿选择；Spike 基础达标后即可安排。";
+      why = "新四年级（刚升上四年级）<b>尚无 Python / C++ 代码基础</b>：优先体验 <b>Spike 智能机器人编程</b>——先在图形化与硬件中建立编程直觉。<b>C++ 信息学课程与 PYTHON 纯代码编程都可以</b>作为后续推荐课，由家长 / 顾问按孩子意愿选择；Spike 基础达标后即可安排。";
     }
   }
   // 四年级：优先 Python 体验课，就低不就高；
@@ -825,13 +829,13 @@ function judge(d){
       why = "四年级<b>已有 C++ 基础</b>：不必从 Python 重新起步，<b>可直接进入 C++ 信息学课程</b>测试与学习。";
     } else if (O === 0 && K === 0 && M < 10){ // 三项全缺：先 Spike 打底
       course="Spike"; hit="P4";
-      why = "四年级打字、编程基础、数学<b>三项全缺</b>：按「<b>就低不就高</b>」先到 Spike 段，建立图形化概念 + 打字专项，达标后复测转 Python。";
+      why = "四年级打字、编程基础、数学<b>三项全缺</b>：先到 Spike 段，建立图形化概念 + 打字专项，达标后复测转 Python。";
     } else if (HAS_CPP){ // 有 C++ 基础，但打字「不会」→ 同样就低
       course="Python"; hit="P4";
-      why = "四年级已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——按「<b>就低不就高</b>」先安排 <b>Python 体验课</b>（语法更易上手，可与打字专项同步推进）；打字达标后复测转 C++。";
+      why = "四年级已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——先安排 <b>Python 体验课</b>（语法更易上手，可与打字专项同步推进）；打字达标后复测转 C++。";
     } else {
       course="Python"; hit="P4";
-      why = "四年级<b>优先安排 Python 体验课</b>：本段按「<b>就低不就高</b>」取档——除已具备 <b>C++ 基础</b> 外，即使数学 ≥ 90 或仅有 Python 基础，也<b>从 Python 起步，不直接判 C++</b>；待 Python 阶段表现稳定后，再评估转 C++ 竞赛方向。";
+      why = "四年级<b>优先安排 Python 体验课</b>：除已具备 <b>C++ 基础</b> 外，即使数学 ≥ 90 或仅有 Python 基础，也<b>从 Python 起步，不直接判 C++</b>；待 Python 阶段表现稳定后，再评估转 C++ 竞赛方向。";
     }
   }
   // P5 唯一回落（三项全缺）
@@ -857,7 +861,7 @@ function judge(d){
       course="Python"; hit="P4";
       if (d.math <= 60)      why = "数学未过 60 分：按慢班推进并同步数学强化，达标后复测转 C++。";
       else if (HAS_CPP && O === 0)
-                             why = "已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——按「<b>就低不就高</b>」先入 Python 并同步补打字，打字达标后复测转 C++。";
+                             why = "已有 <b>C++ 基础</b>，但<b>打字基础「不会」</b>——先入 Python 并同步补打字，打字达标后复测转 C++。";
       else if (O < 10)       why = "数学未达 90 分且打字未达「基本会」：同步开打字专项（2–4 周），数学 ≥ 90 或打字达标后复测转 C++。";
       else if (K < 6)        why = "数学未达 90 分且无编程基础：逐步学习编程知识点建立基础，数学或基础任一提升后复测转 C++。";
       else                   why = "三条 C++ 通道均未命中：先进入 Python 课程，基础达标后复测转 C++。";
@@ -866,26 +870,29 @@ function judge(d){
 
   /* ---------- 配套建议 ---------- */
   const tips = [];
-  if (course === "C++" && !HAS_CPP && d.math >= 90 && O < 10)
-    tips.push("数学高分直通，但打字未达「基本会」——建议开班后<b>同步开打字专项（2–4 周）</b>。");
+  // 打字专项练习网站（打字「不会」/「比较慢」时统一给出）
+  const TYPE_SITE = '<a href="https://dazi.91xjr.com/" target="_blank" rel="noopener">dazi.91xjr.com</a>';
   if (course === "C++" && !HAS_CPP && d.math >= 90 && K < 6)
     tips.push("无编程基础但数学达标——建议同步补<b>图形化基础习惯</b>，不影响进入竞赛方向。");
-  if (course === "Python" && O < 10)
-    tips.push("打字未达「基本会」：建议<b>加打字专项（2–4 周）</b>。");
+  // 打字「不会」/「比较慢」：二年级及以上的任何课程段都安排 2–4 周打字专项
+  if (O < 10 && ord >= 2){
+    const lvl = (d.speed && d.speed.t) ? d.speed.t.replace(/（[\s\S]*$/, "") : "";
+    tips.push("当前打字「<b>" + lvl + "</b>」尚未达「基本会」：建议安排 <b>2–4 周打字专项</b>（每天 15–20 分钟），练习网站 " + TYPE_SITE + "；打字达标后课程推进更顺畅。");
+  }
   if (course === "Python" && d.math <= 60)
     tips.push("数学 ≤ 60 分：按慢班节奏推进并<b>同步数学强化</b>，数学 ＞ 60 后复测转 C++。");
   if (course === "Python" && K < 6)
     tips.push("无编程基础：<b></b>建立顺序与循环概念等基础，具备基础后复测转 C++。");
   if (course === "C++" && CAN_CPP)
     tips.push("已凭 <b>C++ 基础</b>直通：建议直接切入 <b>算法与竞赛真题</b>训练，同步规划 <b>CSP-J/S 与 GESP</b> 考级。");
-  if (course === "Python" && HAS_CPP && O === 0)
-    tips.push("有 C++ 基础但<b>打字「不会」</b>：先补齐打字（2–4 周），达标后复测转 C++。");
+  if (course === "Python" && HAS_CPP)
+    tips.push("有 <b>C++ 基础</b>但打字尚未达标：打字过关后即可复测转 <b>C++ 信息学课程</b>。");
   if (course === "C++")
     tips.push("建议同步规划 <b>CSP-J/S 与 GESP 考级</b>路线。");
   if (course === "Spike" && hit === "P3")
     tips.push("三年级无代码课通道：如孩子能力突出，请先<b>对接讲师做能力测评</b>，由讲师确认后再安排代码课");
   if (course === "Spike" && hit === "P5")
-    tips.push("先建<b>图形化概念 + 打字专项</b>，2–4 周达标后复测转 Python。");
+    tips.push("先建 <b>图形化概念</b>，基础达标后复测转 Python。");
   if (course === "Spike" && g && g.new4){
     tips.push("新四年级<b>尚无 Python / C++ 代码基础</b>，优先体验 <b>Spike 智能机器人编程</b>：先在图形化与硬件中建立编程直觉。");
     tips.push("后续 <b>C++ 信息学课程与 PYTHON 纯代码编程都可以</b>推荐，按孩子意愿与学习节奏择一即可。");
@@ -895,7 +902,7 @@ function judge(d){
   if (course === "Python" && g && g.new4 && HAS_PY && !HAS_CPP)
     tips.push("新四年级<b>已有 Python 基础</b>：直接进入 <b>Python 体验课</b> 巩固语法与调试习惯；补齐 C++ 基础后即可评估转 <b>C++ 竞赛方向</b>。");
   if (course === "Python" && ord === 4 && !(g && g.new4))
-    tips.push("四年级按<b>就低不就高</b>从 <b>Python 体验课</b> 起步：先适应纯代码环境、建立语法与调试习惯；除已有 <b>C++ 基础</b> 外，表现稳定后再评估 <b>C++ 竞赛方向</b>。");
+    tips.push("四年级从 <b>Python 体验课</b> 起步：先适应纯代码环境、建立语法与调试习惯；除已有 <b>C++ 基础</b> 外，表现稳定后再评估 <b>C++ 竞赛方向</b>。");
   if (course === "大颗粒" && hit === "P0")
     tips.push("小班 / 中班阶段<b>不接触代码、不考核英语</b>：建议完成 1 个学期 <b>LEGO 创意编程启蒙</b> 后，再评估升入 Spike 段。");
   if (course === "大颗粒")
