@@ -165,6 +165,8 @@
   .c-spikeq{background:linear-gradient(135deg,#3FB6D8,#2A93B8);}
   .c-spike{background:linear-gradient(135deg,#5B7FE0,#3C5EC7);}
   .c-python{background:linear-gradient(135deg,#2E9E7B,#1F7F62);}
+  .c-aigc{background:linear-gradient(135deg,#2EA2E7,#1565C0);}
+  .c-emb{background:linear-gradient(135deg,#17A0A0,#0E7373);}
   .c-cpp{background:linear-gradient(135deg,#1565C0,#0E4A92);}
 
   .why{
@@ -329,11 +331,15 @@ footer.ft11 b{color:var(--navy2);}
     font-size:12.5px;font-weight:800;letter-spacing:.6px;
     padding:8px 16px;border-radius:999px;color:#fff;
     box-shadow:0 7px 18px rgba(15,36,64,.14);
+    cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;
   }
+  .wc-course .cc:hover{transform:translateY(-2px);box-shadow:0 11px 22px rgba(15,36,64,.2);}
   .cc.granule{background:linear-gradient(135deg,#E8A55C,#D98A34);}
   .cc.spikeq {background:linear-gradient(135deg,#3FB6D8,#2A93B8);}
   .cc.spike  {background:linear-gradient(135deg,#5B7FE0,#3C5EC7);}
   .cc.python {background:linear-gradient(135deg,#2E9E7B,#1F7F62);}
+  .cc.aigc   {background:linear-gradient(135deg,#2EA2E7,#1565C0);}
+  .cc.emb    {background:linear-gradient(135deg,#17A0A0,#0E7373);}
   .cc.cpp    {background:linear-gradient(135deg,#1565C0,#0E4A92);}
   .cc.uav    {background:linear-gradient(135deg,#8B5CF6,#6D3FD4);}
   .cc.uav::before{content:"✈";margin-right:5px;font-size:11px;opacity:.92;}
@@ -396,7 +402,7 @@ footer.ft11 b{color:var(--navy2);}
   }
   #course-modal.on .cm-mask{opacity:1;}
   .cm-box{
-    position:relative;width:min(760px,100%);max-height:88vh;display:flex;flex-direction:column;
+    position:relative;width:min(780px,100%);max-height:92vh;display:flex;flex-direction:column;
     background:#fff;border-radius:20px;overflow:hidden;
     box-shadow:0 30px 80px rgba(6,20,40,.42);
     transform:translateY(26px) scale(.965);opacity:0;
@@ -405,7 +411,7 @@ footer.ft11 b{color:var(--navy2);}
   #course-modal.on .cm-box{transform:none;opacity:1;}
 
   .cm-head{
-    position:relative;padding:22px 26px 20px;color:#fff;flex:0 0 auto;overflow:hidden;
+    position:relative;padding:18px 24px 16px;color:#fff;flex:0 0 auto;overflow:hidden;
   }
   .cm-head::after{
     content:"";position:absolute;right:-34px;top:-38px;width:150px;height:150px;
@@ -427,11 +433,11 @@ footer.ft11 b{color:var(--navy2);}
   }
   .cm-close:hover{background:rgba(255,255,255,.36);transform:rotate(90deg);}
 
-  .cm-body{padding:20px 26px 24px;overflow-y:auto;flex:1 1 auto;}
+  .cm-body{padding:16px 24px 20px;overflow-y:auto;flex:1 1 auto;}
   .cm-body::-webkit-scrollbar{width:8px;}
   .cm-body::-webkit-scrollbar-thumb{background:#CFE0F2;border-radius:4px;}
 
-  .cm-sec{margin-bottom:18px;}
+  .cm-sec{margin-bottom:13px;}
   .cm-sec:last-child{margin-bottom:0;}
   .cm-sh{
     font-size:13px;font-weight:800;color:var(--navy2);letter-spacing:.5px;
@@ -445,6 +451,10 @@ footer.ft11 b{color:var(--navy2);}
   .cm-txt + .cm-txt{margin-top:7px;}
   .cm-txt b{color:#B96A0F;}
   .cm-txt em{font-style:normal;font-weight:800;color:var(--blue2);}
+  /* 页签内的方向简介：无标题，用左侧强调线区分 */
+  .cm-pane > .cm-sec:first-child:not(:has(.cm-sh)) > .cm-txt:first-child{
+    padding-left:11px;border-left:3px solid #CFE0F2;
+  }
 
   .cm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;}
   .cm-card{
@@ -454,6 +464,55 @@ footer.ft11 b{color:var(--navy2);}
   .cm-card h5{font-size:12.5px;font-weight:800;color:var(--blue2);margin-bottom:6px;}
   .cm-card p{font-size:12.2px;line-height:1.75;color:var(--navy2);}
   .cm-card p + p{margin-top:5px;}
+
+  /* 弹窗分页签 */
+  .cm-tabs{
+    display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+    padding:0 0 10px;margin-bottom:11px;
+    border-bottom:1px solid var(--line);
+  }
+  .cm-tab{
+    font-size:12px;font-weight:800;letter-spacing:.2px;
+    padding:6px 13px;border-radius:999px;cursor:pointer;
+    background:#EEF5FD;color:var(--blue2);border:1px solid transparent;
+    transition:all .18s ease;white-space:nowrap;
+  }
+  .cm-tab:hover{background:#E1EDFB;}
+  .cm-tab.on{
+    background:linear-gradient(135deg,var(--blue),var(--blue2));
+    color:#fff;box-shadow:0 5px 14px rgba(21,101,192,.28);
+  }
+  .cm-tab .sn{
+    display:inline-block;min-width:15px;height:15px;line-height:15px;text-align:center;
+    border-radius:50%;font-size:10px;margin-right:5px;padding:0 2px;box-sizing:content-box;
+    background:rgba(255,255,255,.28);
+  }
+  .cm-tab:not(.on) .sn{background:rgba(21,101,192,.14);color:var(--blue2);}
+  /* 分组小标：插在每组第一个页签之前 */
+  .cm-grp{
+    display:inline-flex;align-items:center;
+    font-size:10.5px;font-weight:800;letter-spacing:.6px;color:#8698AC;
+    padding-left:11px;margin-left:5px;border-left:1px solid var(--line);
+    align-self:stretch;
+  }
+  .cm-tabs > .cm-grp:first-child{border-left:0;margin-left:0;padding-left:0;}
+  /* 弹窗内配图 */
+  .cm-imgs{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:4px 0 16px;
+  }
+  .cm-imgs:has(.cm-fig:only-child){grid-template-columns:1fr;}
+  .cm-fig{
+    margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:#F7FAFD;
+  }
+  .cm-fig img{display:block;width:100%;height:auto;max-height:220px;object-fit:contain;}
+  .cm-fig figcaption{
+    font-size:11.5px;color:#6B8199;text-align:center;padding:6px 8px;
+    border-top:1px dashed var(--line);background:#fff;
+  }
+  .cm-pane{display:none;}
+  .cm-pane.on{display:block;animation:cmfade .26s ease both;}
+  @keyframes cmfade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 
   .cm-list{list-style:none;font-size:12.6px;line-height:1.8;color:var(--navy2);}
   .cm-list li{padding-left:17px;position:relative;margin-bottom:5px;}
@@ -532,16 +591,16 @@ footer.ft11 b{color:var(--navy2);}
       </div>
     </div>
 
-    <div class="wc-course">
-      <span class="cc granule">大颗粒创意启蒙</span>
-      <span class="cc spike">Spike智能机器人</span>
-      <span class="cc python">Python人工智能</span>
-      <span class="cc cpp">信息学奥赛C++</span>
-      <span class="cc uav">智能无人机</span>
+    <div class="wc-course" id="wc-course-chips">
+      <span class="cc granule" data-course="大颗粒">大颗粒创意启蒙</span>
+      <span class="cc spike"   data-course="Spike">Spike智能机器人</span>
+      <span class="cc python"  data-course="Python">Python人工智能</span>
+      <span class="cc aigc"    data-course="Python">生成式人工智能</span>
+      <span class="cc emb"     data-course="Python">具身智能</span>
+      <span class="cc cpp"     data-course="C++">信息学奥赛C++</span>
     </div>
 
     <button class="wc-btn" id="btn-start">开 始 匹 配</button>
-
 
   </div>
 </div>
@@ -974,8 +1033,8 @@ fillSelect(sel.speed, OPT.speed, 0);
 const COURSE_META = {
   "大颗粒":   {tag:"推荐测评课", cls:"granule", sub:"LEGO 创意编程启蒙 · 机械搭建　｜　幼儿园小班–大班（3–5 岁）"},
   "Spike启蒙":{tag:"推荐测评课", cls:"spikeq",  sub:"乐高 Spike + 图形化入门　｜　6 岁（一年级）起"},
-  "Spike":    {tag:"推荐测评课", cls:"spike",   sub:"图形化基础 / 进阶 · 竞赛启蒙　｜　8 岁（二年级）起"},
-  "Python":   {tag:"推荐测评课", cls:"python",  sub:"代码编程主入口　｜　10 岁（四年级）起"},
+  "Spike":    {tag:"推荐测评课", cls:"spike",   sub:"SPIKE Prime · 图形化→Python　｜　3–6 年级"},
+  "Python":   {tag:"推荐测评课", cls:"python",  sub:"AI人工智能软件人才编程课程　｜　8–14 岁"},
   "C++":      {tag:"推荐测评课", cls:"cpp",     sub:"信息学竞赛方向　｜　CSP-J/S · GESP"}
 };
 
@@ -1038,47 +1097,86 @@ const COURSE_INFO = {
 
   "Spike": {
     name: "SPIKE 智能机器人编程",
-    tag:  "课程介绍 · 进阶段",
-    sub:  "乐高 45678 + 45681　｜　8 岁（二年级）起　｜　图形化 + 硬件 + 竞赛",
+    tag:  "课程介绍 · 小高组",
+    sub:  "SPIKE Prime 科创套装　｜　3–6 年级　｜　图形化编程 → Python 代码编程",
     cls:  "spike",
     intro: [
-      "SPIKE 课程以解决复杂实际问题来设计机器人项目，通过搭建机械结构与编程模块的综合运用，让学生初步理解人机交互的基本原理，进而实现机器人功能并解决问题。",
-      "课程打通「搭建 — 编程 — 竞赛 — 考级」全链路，为后续 Python 代码课与信息学方向建立扎实的工程与逻辑基础。"
+      "从图形化到 Python 代码编程，掌握 Scratch 图形化编程与 Python 文本编程。课程以 <b>SPIKE Prime 科创套装</b> 为软硬件载体，实现软硬件深度融合，通过项目制学习全面提升编程能力、工程思维与团队协作能力。",
+      "智能机器人编程（小高组）实现从图形化编程到 Python 代码编程的跨越。课程以 <b>VEX、Botball、白名单赛事</b> 等权威机器人竞赛为出口，系统训练竞赛任务拆解、方案设计、编程实现与团队协作能力。学生在「做中学」的过程中，不仅掌握机器人技术，更培养了解决复杂问题的工程思维。",
+      "竞赛助力升学竞争力，项目制学习全面提升。"
     ],
-    content: [
-      {h:"SPIKE 基础课程", p:"基于解决简单生活问题来设计机器人项目，教具使用乐高 45678 套装与 45681 配件库，搭建具备不同功能的机器人作品，编程方面运用图形化编程软件编写程序，实现机器人功能并解决问题。"},
-      {h:"SPIKE 进阶课程", p:"基于解决复杂实际问题来设计机器人项目，继续使用乐高 45678 套装和 45681 配件库，编程继续使用图形化编程软件编写程序，实现机器人功能并解决问题。"},
-      {h:"SPIKE 高阶课程", p:"针对人工智能时代引导学生思考和展望未来生活方式，鼓励学生多种方式解决问题。使用乐高 45678、45681 搭建创意机器人模型，结合 <b>Python 代码编程</b>软件编写程序，最终完成问题的创意解决方案。"}
-    ],
-    lists: [
-      {h:"知识梯度与出口", items:[
-        "知识梯度：<b>基础结构 → 简单机械结构 → 简单机械结构 + 少量科技件 → 复杂机械结构 → 机构综合应用</b>。",
-        "搭建教具：大颗粒 → 小颗粒少量科技件 → <b>纯科技件</b>。",
-        "科创出口：全国青少年机器人技术等级考试、教育部白名单赛事。"
+    tabs: [
+      {name:"SPIKE 基础编程", content:[
+        {h:"3–4 年级 · 图形化编程与基础机械", p:"SPIKE Prime 科创套装结合图形化编程软件，利用软硬件结合的方式学习机器人编程。搭建方面培养空间建构能力和动手能力，掌握齿轮传动、皮带传动、锥齿轮传动、曲柄摇杆等机械机构；编程方面学习电机控制、传感器使用、等待模块、重复执行等图形化编程知识。<br><b>编程知识：</b>速度设置、电机运行、等待时间、传感器开启、矩阵灯控制、重复执行。<br><b>机械知识：</b>齿轮传动、皮带传动、锥齿轮传动、曲柄摇杆、连杆机构。<br><b>实践项目：</b>航天训练器、星球车、智能车库门、扫地机器人、骑行机器人、敲鼓机器人、智能巡线车、夹爪机器人等。"}
+      ]},
+      {name:"SPIKE 进阶编程", content:[
+        {h:"4–5 年级 · 复杂机械结构与程序逻辑", p:"以 SPIKE Prime 科创套装为硬件载体，深入学习蜗轮蜗杆、齿轮齿条、棘轮棘爪、曲柄滑块、平行四边形机构等复杂机械结构。编程方面掌握条件判断、传感器综合应用、变量与数据存储、程序逻辑优化，培养复杂任务拆解与程序设计能力。<br><b>编程知识：</b>条件判断、传感器融合、变量存储、程序逻辑优化、事件控制。<br><b>机械知识：</b>蜗轮蜗杆、齿轮齿条、棘轮棘爪、曲柄滑块、平行四边形机构、滑轮组。<br><b>实践项目：</b>智能道闸、开合桥、龙门吊、双层巴士、垃圾清运车、升降电梯、避障机器人、机械手臂等。"}
+      ]},
+      {name:"SPIKE 高阶编程", content:[
+        {h:"5–6 年级 · Python 代码编程进阶", p:"进入 Python 代码编程阶段。学习 Python 基础语法（变量、数据类型、循环、条件判断、函数、列表等），通过代码控制电机和传感器，掌握自定义函数、while 循环、if 判断、逻辑运算符、列表操作、计时器等核心编程知识。完成巡线、自主避障、精准定位等高级任务。<br><b>编程知识：</b>变量与数据类型、while 循环与 for 循环、if 判断与嵌套、自定义函数、列表操作、逻辑运算符、计时器。<br><b>机械知识：</b>行星齿轮机构、齿轮加速与减速、多机构综合应用、复杂传动系统设计。<br><b>实践项目：</b>智能发球机、旋转咖啡杯、海盗船、塔式起重机、送餐机器人、探路先锋、智能避障先锋、精准定位机械臂、全能任务战士等。"}
+      ], lists:[
+        {h:"科创挑战及测评", items:[
+          "<b>VEX、RoboRAVE、Botball</b> 等国际顶级机器人赛事。",
+          "世界机器人大会（<b>WRC</b>）、广东省青少年机器人竞赛、东莞市青少年机器人竞赛等白名单赛事。",
+          "全国青少年机器人技术等级考试 <b>3–5 级</b>。"
+        ]}
       ]}
     ]
   },
 
   "Python": {
-    name: "PYTHON 纯代码编程",
+    name: "AI人工智能软件人才编程课程",
     tag:  "课程介绍 · 代码主入口",
-    sub:  "从图形化过渡到真代码　｜　10 岁（四年级）起",
+    sub:  "面向 8-14 岁　｜　AIGC 人工智能 · Python 代码编程 · 具身智能",
     cls:  "python",
     intro: [
-      "Python 趣味游戏课程：学生将通过 6 个单元系统的学习 Python 语法知识，从零开始打造自己的程序，课程案例的选择都着重于传授和实践 Python 基础知识，每节课都包含展示不同知识点的小案例，通过完成这些案例来加深学习效果。",
-      "案例类型多样、内容生动有趣，确保每节课都为学生带来独特的学习体验，真正学会「用代码解决问题」，为 AIGC 与人工智能方向打基础。"
+      "以 Python 为轴心的人工智能课程群。Python 语法简洁优雅、入门门槛低，开源生态扩展性强，是青少年系统学习代码编程的首选语言；在此基础上延伸 <b>生成式人工智能（AIGC）</b> 与 <b>具身智能</b> 两大前沿方向，形成「代码基础 → AI 创作 → 智能体行动」的完整成长路径。"
     ],
-    content: [
-      {h:"Level 2 · Python 智能场景课程", p:"共分 4 个单元，每个单元都会带领学生完成一个中型游戏类程序从 0 到 1 的完整制作，以此带领学生揭秘程序的底层逻辑与核心知识。项目由易到难、由简单到复杂、逐级递增，锻炼程序架构能力，让学生真正可以根据需求创造属于自己的程序。"},
-      {h:"Level 3 · WEB 网页编程课程", p:"共分 3 个单元，每个单元都会带领学生用 <b>AI 工具</b>从 0 到 1 完成一个项目——「AI 体感水果忍者」游戏项目、「超级课程表」桌面应用程序项目（帮学生解决丢三落四的毛病）、「健康微」项目。"},
-      {h:"Level 4 · WEB 服务器编程课程", p:"共分 3 个单元，每个单元都会带领学生从 0 到 1 完整开发一个带有 AI 功能的新型手机 App 项目——「AI 语音助手」项目、「超级错题本」项目、「奔跑日记」项目。"},
-      {h:"Level 5 · 人工智能算法编程", p:"共分 3 个单元，运用人工智能专业知识开发一个基础的人工智能应用程序——「植物识别 App」（数据科学、机器学习、深度学习）、「智能语音翻译器」、「校园安全监控预警系统」。"}
-    ],
-    lists: [
-      {h:"课程优势", items:[
-        "学习「真编程」无预留、无封装，让学生从 0 到 1 学习原生代码编程。",
-        "虚实结合授课，使用动画将编程概念实体化，用流程图将讲解思路具象化、用形象举例将编程应用生活化。",
-        "面向未来人工智能时代学习多种 AI 工具的用法，让孩子学会用 AI 工具超越同龄人。"
+    tabs: [
+      {name:"AIGC 创意设计", noIntroTitle:true, intro:[
+        "<b>生成式人工智能（AIGC）</b>课程让学生从 AI 工具的使用者成长为 AI 时代的创作者与造物者。课程全面覆盖<b>文生文、文生图、文生视频、文生音</b>全模态创作能力，深度融合 <b>AI 3D 建模与 3D 打印</b>技术，形成「AI 驱动设计 — 智能辅助建模 — 快速实物转化」的完整链路。",
+        "面向 <b>9-12 岁（三年级至六年级）</b>。学生将独立完成数字绘本、短视频、原创音乐、3D 打印实物等高质量作品，不仅能挥洒数字创意，更能让想象力变成触手可及的实体，在虚实交融中解锁未来智造的无限可能。"
+      ], content:[
+        {h:"AIGC 初体验与 3D 启蒙（三至四年级）", p:"了解 AIGC 基本概念与发展历程，学习文生文与文生图原理，掌握提示词设计优化技巧。初识腾讯混元 3D 平台，学习文本描述生成 3D 模型的基本方法，理解「文字 → 3D 模型」的创作流程。<br><b>创作方向：</b>脚本设计、提示词工程、3D 模型生成。<br><b>核心技能：</b>文生文、文生图、提示词设计、文本生成 3D。<br><b>作品类型：</b>AI 对话故事、古诗画卷、初代 3D 模型。<br><b>实践项目：</b>西游奇趣对话、古诗画卷、AI 模型诞生记。"},
+        {h:"AI 绘画大师与 3D 设计（四至五年级）", p:"使用主流 AI 绘画工具（Midjourney / 文心一言），学习艺术风格词汇库，掌握绘本制作全流程。进阶学习 AI 3D 建模技巧，使用混元 3D 生成可打印的 3D 模型，学习模型修复与优化方法，为 3D 打印做准备。<br><b>创作方向：</b>绘本制作、数字绘画、3D 建模。<br><b>核心技能：</b>AI 绘画、艺术风格、分镜设计、3D 模型优化。<br><b>作品类型：</b>数字绘本、艺术图片、可打印 3D 模型。<br><b>实践项目：</b>绘本制作、未来照相馆、3D 模型修复师。"},
+        {h:"AI 创意视频与 3D 打印（五至六年级）", p:"学习文生视频与图生视频技术，掌握 AI 剪辑工具与转场特效设计。完成 3D 模型切片与打印实操，掌握 3D 打印全流程（切片设置、支撑添加、打印后处理）。完成「我的冠军奖杯」终极挑战项目，实现从创意到实物的完整创作。<br><b>创作方向：</b>视频创作、音乐制作、3D 打印实物。<br><b>核心技能：</b>文生视频、AI 剪辑、AI 音乐、切片与 3D 打印。<br><b>作品类型：</b>短视频、配乐作品、3D 打印实物作品。<br><b>实践项目：</b>AI 影像创作、我的第一首 AI 主打歌、冠军奖杯 3D 打印。"}
+      ], lists:[
+        {h:"科创挑战", items:["全国青少年人工智能大赛、东莞市青少年 AIGC 视频创作活动。"]},
+        {h:"课程优势", items:[
+          "全模态覆盖：文生文、文生图、文生视频、文生音一站式打通。",
+          "虚实结合：AI 3D 建模 + 3D 打印，让创意从虚拟走向实体。",
+          "成果可视：每阶段产出数字绘本、短视频、原创音乐、3D 打印实物等可展示作品。",
+          "面向未来：培养 AI 时代创作者与造物者，建立技术思维与创意思维双轨认知。"
+        ]}
+      ]},
+
+      {name:"Python 代码编程", noIntroTitle:true, intro:[
+        "契合人工智能时代的主流编程语言。<b>Python 语法简洁优雅、入门门槛低，开源生态扩展性强</b>，拥有丰富且强大的标准库与第三方库，是青少年系统学习代码编程的首选语言。",
+        "面向 <b>8-14 岁（三年级至九年级）</b>。课程以项目式学习为核心，每节课完成一个可运行的程序作品，以创意编程培养组织能力与架构思维，培养系统化编程思维与创新能力。"
+      ], content:[
+        {h:"Python 基础编程（原生代码入门）", p:"<b>80 个</b> Python 语法知识点、<b>30 个</b>海龟绘图知识点、<b>200+</b> 个计算机英语单词。课程通过最原生的编程知识学习，让学生从零搭建属于自己的程序。内容涵盖<b>程序结构、绘图编程、函数入门、列表与循环、算法集训</b>五大单元，完成 <b>17 个</b>编程作品。<br><b>核心知识：</b>变量与数据类型、print/input 输入输出、while 循环、if 条件判断、turtle 海龟绘图、函数定义与调用、全局变量与局部变量、列表的创建与操作、for 循环遍历、range 数列生成、双重 for 循环嵌套。<br><b>代表作品：</b>密码系统、电子商城、成绩评定系统、我的世界人物绘制、计算器、欢乐抽奖机、数字艺术画、盲盒娃娃机、单词记忆专家、九宫棋。<br><b>算法集训：</b>数列求和、逢 7 必过、九九乘法表、鸡兔同笼问题。"},
+        {h:"Python 进阶编程（游戏开发进阶）", p:"<b>50 个</b> Python 语法知识点、<b>21 个</b> pygame 知识点、<b>150+</b> 个计算机英语单词。课程通过游戏类程序的制作，揭秘程序的底层逻辑与核心知识，涵盖<b>界面设计、交互设计、数据处理、程序优化</b>四大部分，完成 <b>3 个</b>小型游戏项目、<b>3 个</b>中型游戏项目。<br><b>核心知识：</b>pygame 游戏开发、键盘事件与碰撞检测、字符串处理与进制转换、字典的创建与修改、插入排序算法、图片加载与动画、文件读写与异常处理、贪心算法。<br><b>代表作品：</b>极速赛车（模拟驾驶游戏）、密室冒险（冒险解谜游戏）、龙与魔法（角色扮演游戏）、开心农场（策略游戏）。<br><b>算法集训：</b>插入排序、贪心算法。"}
+      ], lists:[
+        {h:"等级测评证书", items:["青少年人工智能编程水平测试 <b>四级 — 八级</b>。"]},
+        {h:"科创挑战", items:["发现杯国际青少年编程挑战赛、全国青少年人工智能大赛、全国青少年科技创新大赛、横琴粤澳深度合作区人工智能大赛、广东省青少年科技创客大赛、东莞市中小学学生信息科技创新大赛等白名单赛事。"]},
+        {h:"教学理念与能力培养", items:[
+          "<b>教学理念：</b>培养解决问题的能力、做中学、螺旋式知识设计、项目式学习。",
+          "<b>思维能力：</b>编程思维、数学思维、抽象思维、逻辑思维、批判思维、工程思维、专注能力。",
+          "<b>表达能力：</b>严谨习惯、解决问题能力、设计能力、创新能力。",
+          "<b>进阶路径：</b>基础编程（17 个作品）→ 进阶编程（6 个游戏项目）→ 后续可衔接 C++ 信息学、AIGC 创意设计、具身智能等课程。"
+        ]}
+      ]},
+
+      {name:"具身智能", noIntroTitle:true, intro:[
+        "具身智能是 AI 发展的下一个浪潮，将大模型的理解能力与机器人的行动能力深度融合。本课程使用 <b>Aelos 人形机器人</b>，让学生在编程中掌握「<b>感知 — 决策 — 行动</b>」的完整 AI 闭环。",
+        "面向 <b>9-12 岁（四年级至六年级）</b>。课程特色：人形机器人编程，掌握感知-决策-行动 AI 闭环；Aelos 人形机器人 + 大模型深度融合；图形化与 Python 双轨编程；多传感器融合与视觉识别。学生将亲手打造能够「理解」并「行动」的智能机器人，走在 AI 时代的最前沿。"
+      ], content:[
+        {h:"具身智能基础课程（四至五年级）", p:"学习大模型 GPT 原理与发展历程，理解具身智能定义与核心特征，掌握感知-决策-行动完整闭环。认识人形机器人组成结构（16 轴舵机系统、传感器、控制器），学习 Aelos 机器人基本操作与连接方法。了解具身智能在工业中的应用和优势。<br><b>核心知识：</b>大模型原理、具身智能定义、感知-决策-行动闭环、人形机器人结构、传感器认知。<br><b>实践项目：</b>机器人连接与控制、基础动作编程。"},
+        {h:"具身智能进阶课程（五至六年级）", p:"采用图形化与 Python 双轨编程，学习舵机控制与多自由度运动编程。融合多传感器应用（人体红外、温湿度、光敏、触摸、地磁），掌握大模型 API 调用与语音交互开发（TTS 语音合成 / ASR 语音识别）。通过智能迎宾、颜色识别搬运、ARTag 码导航、工业分拣模拟等综合项目实战，培养具身智能系统开发能力。<br><b>核心知识：</b>双轨编程、舵机控制、多传感器融合、大模型 API 调用、语音交互、机器视觉。<br><b>实践项目：</b>智能迎宾、语音控制机器人、颜色识别与搬运、ARTag 码导航、工业分拣模拟。"},
+        {h:"具身智能高阶课程（六年级至初一）", p:"深入具身智能算法层与大模型应用层，学习机器视觉（图像识别、目标检测、颜色与形状识别）、SLAM 自主导航、多机器人协同控制与任务编排。掌握大模型 API 进阶应用（多轮对话、函数调用、智能体 Agent 编排），完成「视觉分拣工作站」「自主导航机器人」「多机器人协同任务」等系统级项目，具备参赛级别的具身智能系统开发能力。<br><b>核心知识：</b>机器视觉、SLAM 导航、多机器人协同、智能体 Agent、大模型函数调用、算法优化。<br><b>实践项目：</b>视觉分拣工作站、自主导航避障机器人、多机器人协同任务编排、智能仓储模拟系统。"}
+      ], lists:[
+        {h:"行业前景", items:["具身智能产业以超 50% 增速发展，行业人才供需比达 <b>5.2 : 1</b>。"]},
+        {h:"科创挑战", items:["人形机器人挑战赛、AI 创意赛、青少年科创赛、全国青少年人工智能大赛。"]}
       ]}
     ]
   },
@@ -1114,42 +1212,48 @@ const COURSE_INFO = {
     ]
   },
 
-  "AIGC": {
-    name: "AIGC 人工智能生成内容课程",
-    tag:  "课程介绍 · 前沿拓展",
-    sub:  "生成式人工智能应用　｜　提示词工程 + AI 创作　｜　多学科开放",
-    cls:  "python",
-    intro: [
-      "青少年学习 AIGC（生成式人工智能）不仅是适应数字时代的必要技能，更是培养未来竞争力的关键。AIGC 课程借助 AI 工具（如 AI 绘画、写作助手）能突破技术壁垒，青少年通过「提示词工程」与 AI 协同创作。",
-      "例如输入「赛博朋克风格的古代书院」生成视觉初稿，再优化细节，培养「AI 生成 + 自主创作」的新型创造力；AIGC 打破学科边界，例如在「AI + 生物与艺术」课程中，学生用自然语言描述植物纹理，AI 生成音乐旋律，结合历史场景图编写对话脚本，建立技术思维与创意思维的双轨认知。"
-    ],
-    content: [
-      {h:"核心学习内容", p:"理论基础（AIGC 基本概念、原理与发展历史，了解人工智能与深度学习的基础知识，以及常见生成模型 GANs、VAEs）；技能实践（图像生成与处理 AI 绘画、风格迁移，音频与视频生成 AI 辅助短视频创作，文本生成与写作，自然语言处理技术）；综合应用（学生自主开发跨学科项目，结合传统文化主题进行创意设计与推广方案制作）。"},
-      {h:"人工智能基础知识", p:"概念与原理（了解 AI 发展历程、机器学习与深度学习基础，以及自然语言处理 NLP 技术）；技术认知（学习 AI 如何理解语言、生成内容，为后续工具应用打下理论基础）。"},
-      {h:"AIGC 核心技术应用", p:"文本生成（使用 GPT 等模型创作文章、故事，学习提示词优化与内容校对）；图像与视频生成（掌握 Midjourney、Stable Diffusion 等工具生成插画、表情包，或通过 Runway 制作 AI 视频）；编程辅助（结合 AI 工具解决编程问题，如作业帮编程的 AI 辅导助手可实时答疑）。"},
-      {h:"实践与竞赛导向", p:"项目实战（通过科技竞赛，如白名单赛事，制作 AI 作品，如文生图、大语言模型应用等）；职场衔接（部分课程涵盖 AI 办公效率提升、商业变现等进阶内容）。"}
-    ],
-    lists: [
-      {h:"课程优势", items:[
-        "主题丰富：课程涵盖认识 AI 机器人结构和类型、AI 绘画提示工程应用、智能导航小助手项目创作等多个主题。",
-        "循序渐进：从基础概念和基本操作开始，逐步深入到具体应用和项目创作。",
-        "实践导向：通过多个项目体验，让学生在操作中深刻理解知识和技能。",
-        "多种提示工程教学：采用指令提示、范例提示、角色提示、组合提示、链式思维提示等多种教学方法。",
-        "跨学科协作：面向多学科学生开放，鼓励从不同专业视角出发，共同解决问题。",
-        "政策与国际趋势：教育部《2023–2027 基础教育课程教学改革深化行动方案》明确推进人工智能与教育融合，AIGC 课程已在全国 500 多所学校落地。"
-      ]},
-      {h:"相关竞赛出口", items:[
-        "全国青少年人工智能创新挑战赛（教育部白名单赛事，含人工智能创新项目）。",
-        "全球发明大会中国区竞赛（含「AI 生成创新挑战赛」）。",
-        "全国青少年人工智能教育成果展示大赛、全国中小学信息技术创新与实践大赛。",
-        "世界机器人大赛青少年电子信息智能创新大赛。"
-      ]}
-    ]
-  }
 };
 
 /* ---------- 课程弹窗 ---------- */
 const cmEl = $("course-modal");
+
+/* 把「介绍 / 内容 / 列表」渲染成一段 HTML（弹窗正文与分页面板共用）
+   - part.introTitle 可自定义标题；part.noIntroTitle=true 时不输出标题 */
+function renderCourseBody(part){
+  let html = "";
+  if (part.intro && part.intro.length){
+    const t = part.noIntroTitle ? "" : `<div class="cm-sh">${part.introTitle || "课程介绍"}</div>`;
+    html += `<div class="cm-sec">
+      ${t}
+      ${part.intro.map(x=>`<p class="cm-txt">${x}</p>`).join("")}
+    </div>`;
+  }
+  if (part.imgs && part.imgs.length){
+    html += `<div class="cm-imgs">${
+      part.imgs.map(im=>`<figure class="cm-fig">
+        <img src="${im.src}" alt="${im.alt || ""}" loading="lazy">
+        ${im.cap ? `<figcaption>${im.cap}</figcaption>` : ""}
+      </figure>`).join("")
+    }</div>`;
+  }
+  if (part.content && part.content.length){
+    html += `<div class="cm-sec">
+      <div class="cm-sh">课程内容</div>
+      <div class="cm-grid">
+        ${part.content.map(c=>`<div class="cm-card"><h5>${c.h}</h5><p>${c.p}</p></div>`).join("")}
+      </div>
+    </div>`;
+  }
+  if (part.lists && part.lists.length){
+    part.lists.forEach(L=>{
+      html += `<div class="cm-sec">
+        <div class="cm-sh">${L.h}</div>
+        <ul class="cm-list">${L.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      </div>`;
+    });
+  }
+  return html;
+}
 
 function openCourseModal(courseKey, r){
   const info = COURSE_INFO[courseKey];
@@ -1163,29 +1267,34 @@ function openCourseModal(courseKey, r){
 
   let html = "";
 
-  if (info.intro && info.intro.length){
-    html += `<div class="cm-sec">
-      <div class="cm-sh">课程介绍</div>
-      ${info.intro.map(t=>`<p class="cm-txt">${t}</p>`).join("")}
-    </div>`;
-  }
-
-  if (info.content && info.content.length){
-    html += `<div class="cm-sec">
-      <div class="cm-sh">课程内容</div>
-      <div class="cm-grid">
-        ${info.content.map(c=>`<div class="cm-card"><h5>${c.h}</h5><p>${c.p}</p></div>`).join("")}
-      </div>
-    </div>`;
-  }
-
-  if (info.lists && info.lists.length){
-    info.lists.forEach(L=>{
+  if (info.tabs && info.tabs.length){
+    // 分页签模式：先定公共介绍（intro），再按级别分页
+    if (info.intro && info.intro.length){
       html += `<div class="cm-sec">
+        <div class="cm-sh">课程介绍</div>
+        ${info.intro.map(t=>`<p class="cm-txt">${t}</p>`).join("")}
+      </div>`;
+    }
+    // 页签渲染（支持 tab.grp 可选分组徽标，未设置则不显示）
+    const tabHtml = info.tabs.map((t,i)=>{
+      let grpTag = "";
+      if (t.grp && i > 0) grpTag = `<span class="cm-grp">${t.grp}</span>`;
+      return `${grpTag}<div class="cm-tab${i===0?' on':''}" data-tab="${i}">
+        <span class="sn">${i + 1}</span>${t.name}</div>`;
+    }).join("");
+    html += `<div class="cm-tabs">${tabHtml}</div>`;
+    html += info.tabs.map((t,i)=>
+      `<div class="cm-pane${i===0?' on':''}" data-pane="${i}">${renderCourseBody(t)}</div>`
+    ).join("");
+    // 分页模式下，公共 lists 挂在最后一页之后（若各 tab 未自带 lists）
+    if (info.lists && info.lists.length && !info.tabs.some(t=>t.lists && t.lists.length)){
+      html += info.lists.map(L=>`<div class="cm-sec">
         <div class="cm-sh">${L.h}</div>
         <ul class="cm-list">${L.items.map(i=>`<li>${i}</li>`).join("")}</ul>
-      </div>`;
-    });
+      </div>`).join("");
+    }
+  } else {
+    html += renderCourseBody(info);
   }
 
   if (r && r.course === courseKey && r.scores && r.scores.length){
@@ -1219,6 +1328,26 @@ $("cm-mask").addEventListener("click", closeCourseModal);
 document.addEventListener("keydown", e=>{
   if (e.key === "Escape" && cmEl.classList.contains("on")) closeCourseModal();
 });
+
+/* 弹窗内分页签切换 */
+$("cm-body").addEventListener("click", e=>{
+  const tab = e.target.closest(".cm-tab");
+  if (!tab) return;
+  const i = tab.dataset.tab;
+  $("cm-body").querySelectorAll(".cm-tab").forEach(t=>t.classList.toggle("on", t === tab));
+  $("cm-body").querySelectorAll(".cm-pane").forEach(p=>p.classList.toggle("on", p.dataset.pane === i));
+  $("cm-body").scrollTop = 0;
+});
+
+/* 首页课程标签 → 点击查看课程介绍（无测评结果时也能打开） */
+const chipsEl = $("wc-course-chips");
+if (chipsEl){
+  chipsEl.addEventListener("click", e=>{
+    const chip = e.target.closest(".cc[data-course]");
+    if (!chip) return;
+    openCourseModal(chip.dataset.course, null);
+  });
+}
 
 /* =========================================================
    测评结果 → 文本报告（供「复制结果」使用）
